@@ -1,0 +1,106 @@
+{
+  "name": "academia-pulse-frontend",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Frontend for Academia Pulse – React + Vite (Offline-first Desktop App)",
+  "main": "electron.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
+    "server-dev": "nodemon --watch src --watch api --ext ts --exec tsx api/server.ts",
+    "build-server": "tsc",
+    "server": "node dist/api/server.js",
+    "electron": "electron .",
+    "electron:dev": "cross-env NODE_ENV=development electron .",
+    "electron:build": "npm run build && electron-builder",
+    "electron:pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "release": "node scripts/release.js"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@google/genai": "^1.40.0",
+    "@google/generative-ai": "^0.24.1",
+    "@tanstack/react-query": "^5.66.7",
+    "axios": "^1.7.9",
+    "cors": "^2.8.6",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "idb": "^8.0.3",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
+    "mysql2": "^3.17.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-hot-toast": "^2.5.2",
+    "react-router-dom": "^7.2.0",
+    "recharts": "^3.7.0",
+    "uuid": "^11.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.3",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0",
+    "electron-log": "^5.0.0",
+    "electron-updater": "^6.1.0",
+    "nodemon": "^3.1.14",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
+  },
+  "build": {
+    "appId": "com.academiapulse.app",
+    "productName": "AcademiaPulse",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron.js",
+      "preload.js",
+      "public/**/*"
+    ],
+    "publish": [{
+      "provider": "github",
+      "repo": "academia-pulse",
+      "owner": "yourusername"
+    }],
+    "win": {
+      "target": "nsis",
+      "icon": "public/icons/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "public/icons/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "public/icons/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AcademiaPulse"
+    }
+  }
+}

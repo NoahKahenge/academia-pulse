@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Academia Pulse | Sovereign Educational Intelligence</title>
+    
+    <!-- Database Configuration -->
+    <meta name="db-host" content="127.0.0.1">
+    <meta name="db-port" content="3306">
+    <meta name="db-name" content="u610315472_ap_master">
+    <meta name="db-user" content="u610315472_ap_user">
+    <meta name="db-charset" content="utf8mb4">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Global Design System */
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --secondary: #0ea5e9;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text: #0f172a;
+            --text-light: #475569;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        #root {
+            min-height: 100vh;
+            position: relative;
+            isolation: isolate;
+        }
+
+        /* Glass Morphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+        }
+
+        .glass-panel-dark {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scrollbar Hide */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animations */
+        @keyframes modal-pop {
+            0% { 
+                transform: scale(0.95) translateY(10px); 
+                opacity: 0; 
+            }
+            100% { 
+                transform: scale(1) translateY(0); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(79, 70, 229, 0.2); }
+        }
+
+        .animate-modal-pop {
+            animation: modal-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out forwards;
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Database Connection Status */
+        .db-connected {
+            position: relative;
+        }
+        .db-connected::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(79, 70, 229, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white;
+            }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .glass-panel {
+                background: rgba(255, 255, 255, 0.95);
+            }
+        }
+    </style>
+
+    <!-- Import Map for Module Resolution -->
+    <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react@19.2.4",
+                "react-dom/client": "https://esm.sh/react-dom@19.2.4/client",
+                "react-dom": "https://esm.sh/react-dom@19.2.4",
+                "react/": "https://esm.sh/react@19.2.4/",
+                "@google/genai": "https://esm.sh/@google/genai@1.40.0",
+                "recharts": "https://esm.sh/recharts@3.7.0",
+                "mysql2": "https://esm.sh/mysql2@3.6.0",
+                "mysql2/promise": "https://esm.sh/mysql2@3.6.0/promise",
+                "dotenv": "https://esm.sh/dotenv@16.3.1",
+                "date-fns": "https://esm.sh/date-fns@4.1.0",
+                "uuid": "https://esm.sh/uuid@11.1.0",
+                "@tanstack/react-query": "https://esm.sh/@tanstack/react-query@5.66.7",
+                "react-hot-toast": "https://esm.sh/react-hot-toast@2.5.2",
+                "react-router-dom": "https://esm.sh/react-router-dom@7.2.0"
+            },
+            "scopes": {
+                "https://esm.sh/": {
+                    "@tanstack/query-core": "https://esm.sh/@tanstack/query-core@5.66.7"
+                }
+            }
+        }
+    </script>
+
+    <!-- Environment Configuration -->
+    <script>
+        window.__ENV__ = {
+            DB_HOST: '127.0.0.1',
+            DB_PORT: '3306',
+            DB_NAME: 'u610315472_ap_master',
+            DB_USER: 'u610315472_ap_user',
+            DB_PASSWORD: '', // Set via environment variable in production
+            NODE_ENV: 'development',
+            API_URL: window.location.origin,
+            APP_VERSION: '2.0.0',
+            APP_NAME: 'Academia Pulse',
+            DATABASE_TIMEOUT: 30000,
+            ENABLE_ANALYTICS: true,
+            ENABLE_AI_FEATURES: true
+        };
+
+        // Production database credentials - DO NOT commit to version control
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // These should be set by your hosting platform's environment variables
+            window.__ENV__.DB_PASSWORD = '${DB_PASSWORD}' || '';
+            window.__ENV__.DB_USER = '${DB_USER}' || window.__ENV__.DB_USER;
+            window.__ENV__.DB_HOST = '${DB_HOST}' || window.__ENV__.DB_HOST;
+        }
+
+        console.log(`🚀 Academia Pulse v${window.__ENV__.APP_VERSION} | Database: ${window.__ENV__.DB_NAME}`);
+    </script>
+
+    <!-- PWA Manifest (optional) -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Academia Pulse">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/icon-192x192.png">
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="/index.css">
+    
+    <!-- Database Connection Check Script -->
+    <script>
+        // Pre-flight database connection test
+        window.testDatabaseConnection = async () => {
+            try {
+                const response = await fetch('/api/health', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Database connection healthy:', data);
+                    return { connected: true, ...data };
+                }
+                return { connected: false, error: 'Health check failed' };
+            } catch (error) {
+                console.warn('⚠️ Database health check failed:', error.message);
+                return { connected: false, error: error.message };
+            }
+        };
+
+        // Execute on load
+        window.addEventListener('DOMContentLoaded', () => {
+            window.testDatabaseConnection().then(status => {
+                window.__DB_STATUS__ = status;
+                
+                // Dispatch event for React app
+                window.dispatchEvent(new CustomEvent('db-status', { detail: status }));
+                
+                if (status.connected) {
+                    console.log(`📊 Connected to ${window.__ENV__.DB_NAME} successfully`);
+                }
+            });
+        });
+    </script>
+</head>
+<body class="overflow-x-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
+    
+    <!-- Database Connection Status Indicator (visible during loading) -->
+    <div id="db-init-indicator" class="fixed top-4 right-4 z-[9999] flex items-center gap-2 glass-panel px-4 py-2 rounded-full shadow-lg no-print">
+        <div class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+        <span class="text-xs font-medium text-slate-600">Connecting to u610315472_ap_master...</span>
+    </div>
+
+    <!-- React Application Root -->
+    <div id="root" class="relative">
+        <!-- Loading State with Database Info -->
+        <div id="initial-loading" class="fixed inset-0 flex items-center justify-center bg-slate-50 z-[10000] transition-opacity duration-500">
+            <div class="text-center max-w-md px-6">
+                <!-- Logo Animation -->
+                <div class="relative mb-8">
+                    <div class="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl shadow-indigo-600/30 animate-pulse-glow">
+                        <i class="fa-solid fa-graduation-cap text-5xl text-white"></i>
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-database text-white text-lg"></i>
+                    </div>
+                </div>
+                
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-3 tracking-tight">
+                    Academia <span class="text-indigo-600">Pulse</span>
+                </h1>
+                
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full uppercase tracking-wider">
+                        Sovereign Node
+                    </span>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-mono rounded-full">
+                        v2.0.0
+                    </span>
+                </div>
+                
+                <div class="glass-panel rounded-2xl p-6 mb-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-database text-indigo-600"></i>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <p class="text-xs font-mono text-slate-500">DATABASE</p>
+                            <p class="text-sm font-bold text-slate-700 truncate">u610315472_ap_master</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="loading-spinner w-5 h-5 border-2"></div>
+                            <span class="text-xs text-slate-600">Establishing secure connection...</span>
+                        </div>
+                        <span class="text-xs text-slate-400">MySQL 11.8.3</span>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-slate-400 font-mono">
+                    Initializing MariaDB connection pool • utf8mb4 • unicode_ci
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Script Fallback -->
+    <noscript>
+        <div class="fixed inset-0 flex items-center justify-center bg-slate-50 z-[20000] p-8">
+            <div class="max-w-md text-center">
+                <div class="w-20 h-20 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-triangle-exclamation text-4xl text-rose-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">JavaScript Required</h2>
+                <p class="text-slate-600 mb-6">
+                    Academia Pulse requires JavaScript to connect to the database and render the educational intelligence platform.
+                </p>
+                <div class="bg-slate-100 rounded-xl p-4 text-left">
+                    <p class="text-xs font-mono text-slate-500 mb-2">DATABASE CONFIGURATION</p>
+                    <code class="text-sm text-slate-700 block">
+                        Host: 127.0.0.1:3306<br>
+                        Database: u610315472_ap_master<br>
+                        Charset: utf8mb4<br>
+                    </code>
+                </div>
+                <p class="text-xs text-slate-400 mt-8">
+                    Please enable JavaScript to access the Sovereign Educational Command System.
+                </p>
+            </div>
+        </div>
+    </noscript>
+
+    <!-- React Entry Point (no stray /index.tsx script) -->
+    <script type="module">
+        import React from 'react';
+        import { createRoot } from 'react-dom/client';
+        import App from './App.tsx';
+
+        // Hide initial loading indicator when React is ready
+        const hideInitialLoading = () => {
+            const loadingEl = document.getElementById('initial-loading');
+            const dbIndicator = document.getElementById('db-init-indicator');
+            
+            if (loadingEl) {
+                loadingEl.style.opacity = '0';
+                setTimeout(() => {
+                    loadingEl.style.display = 'none';
+                }, 500);
+            }
+            
+            if (dbIndicator) {
+                dbIndicator.style.opacity = '0';
+                setTimeout(() => {
+                    dbIndicator.style.display = 'none';
+                }, 500);
+            }
+        };
+
+        // Initialize React with database context
+        const container = document.getElementById('root');
+        
+        if (container) {
+            // Clear the loading placeholder
+            while (container.firstChild) {
+                if (container.firstChild.id === 'initial-loading') {
+                    break; // Keep the loading indicator
+                }
+                container.removeChild(container.firstChild);
+            }
+            
+            try {
+                const root = createRoot(container);
+                
+                // Render App with database configuration
+                root.render(
+                    React.createElement(
+                        React.StrictMode,
+                        null,
+                        React.createElement(App, {
+                            dbConfig: {
+                                host: window.__ENV__.DB_HOST,
+                                port: window.__ENV__.DB_PORT,
+                                database: window.__ENV__.DB_NAME,
+                                user: window.__ENV__.DB_USER,
+                                password: window.__ENV__.DB_PASSWORD,
+                                charset: 'utf8mb4'
+                            },
+                            onReady: hideInitialLoading
+                        })
+                    )
+                );
+                
+                console.log('⚛️ React mounted with database:', window.__ENV__.DB_NAME);
+            } catch (error) {
+                console.error('❌ Failed to initialize React:', error);
+                
+                // Show error in UI
+                container.innerHTML = `
+                    <div class="fixed inset-0 flex items-center justify-center bg-slate-50 p-6">
+                        <div class="max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center border border-red-100">
+                            <div class="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fa-solid fa-circle-exclamation text-4xl text-red-600"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-800 mb-3">Application Error</h2>
+                            <p class="text-slate-600 mb-6">${error.message || 'Failed to initialize the application'}</p>
+                            <button onclick="window.location.reload()" 
+                                class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+                                <i class="fa-solid fa-rotate-right mr-2"></i>
+                                Reload Application
+                            </button>
+                        </div>
+                    </div>
+                `;
+                hideInitialLoading();
+            }
+        }
+    </script>
+    
+    <!-- Database Connection Monitor (Optional, for debugging) -->
+    <script>
+        window.addEventListener('db-status', (e) => {
+            const status = e.detail;
+            const indicator = document.getElementById('db-init-indicator');
+            
+            if (indicator) {
+                if (status.connected) {
+                    indicator.innerHTML = `
+                        <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <span class="text-xs font-medium text-slate-600">u610315472_ap_master • connected</span>
+                    `;
+                    indicator.classList.add('db-connected');
+                    
+                    setTimeout(() => {
+                        indicator.style.opacity = '0';
+                        setTimeout(() => indicator.style.display = 'none', 300);
+                    }, 2000);
+                } else {
+                    indicator.innerHTML = `
+                        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                        <span class="text-xs font-medium text-slate-600">Database connection failed</span>
+                    `;
+                }
+            }
+        });
+    </script>
+    
+    <!-- Service Worker Registration (PWA) -->
+    <script>
+        if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => {
+                    console.log('Service worker registration failed:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
